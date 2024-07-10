@@ -1,0 +1,34 @@
+---
+title: "Reporting under the War Powers Resolution"
+author: "JK Corder"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(readxl)
+library(readr)
+library(dplyr)
+library(knitr)
+library(ggplot2)
+theme_set(theme_classic(base_size = 12))
+# This moves and bolds the figure caption 
+theme_update(plot.caption.position = "plot", plot.caption = element_text(hjust=0, face="bold", size=rel(1.15)))
+```
+
+## All Section 4 reports
+
+The figure below reports the total number of WPR Section 4 reporting by year from 1975 to 2023.
+
+```{r count, include=FALSE}
+wpr_48hr_reports <- read_csv("wpr-48hr-reports.csv")
+wpr_48hr_reports$year<-substr(wpr_48hr_reports$`Report number`, nchar(wpr_48hr_reports$`Report number`)-8, nchar(wpr_48hr_reports$`Report number`)-5)
+table1<- wpr_48hr_reports %>% group_by(year) %>% summarise(count=n()) 
+```
+
+The number of 4(a) reports submitted to Congress spiked in 1994 and in 2014. President Clinton reported the use of force in Bosnia several times in 1994.  Barack Obama reported the use of force in Iraq and Syria, for air operations and ground forces, a total of 10 times in 2014.
+
+```{r figure, echo=FALSE, warnings=FALSE, message=FALSE}
+ggplot(table1, aes(x=as.numeric(year), y=count, group=1)) +
+  xlab("Year")+ ylab("Number of reports")+geom_line()+ scale_x_continuous(breaks=seq(1972,2024,4))
+```
+
